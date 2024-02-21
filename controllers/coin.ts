@@ -4,12 +4,13 @@ import { ParamsDictionary } from "express-serve-static-core";
 import axios from "axios";
 import CryptoCoin from "../models/cryptoCoin";
 
-
+//Error
 interface CustomError extends Error {
     code: number;
     message: string;
 }
 
+//Requests
 interface Req extends Request {
     body: {
         fromCurrency?: string;
@@ -19,25 +20,31 @@ interface Req extends Request {
     }
 }
 
+//For Task 2
 interface CurrentPrice {
-    [key: string]: number;
-}
-
-interface MarketCap {
-    [key: string]: number;
-}
-
-interface TotalVolume {
     [key: string]: number;
 }
 
 interface MarketData {
     current_price: CurrentPrice;
-    market_cap: MarketCap;
-    total_volume: TotalVolume;
 }
 interface CryptoCoinData {
     market_data: MarketData;
+}
+
+//For Task 3
+interface Company {
+    name: string;
+    symbol: string;
+    country: string;
+    total_holdings: number;
+    total_entry_value_usd: number;
+    total_current_value_usd: number;
+    percentage_of_total_supply: number;
+}
+
+interface CryptoPortfolioData {
+    companies: Company[];
 }
 
 
@@ -126,7 +133,6 @@ export const fromCurrenyToCurrency = async (req: Request, res: Response) => {
         const toCurrencyCoinPrice = toCurrencyCoinData.market_data.current_price['usd'];
 
         const relativePrice = fromCurrencyCoinPrice / toCurrencyCoinPrice;
-        console.log(fromCurrencyCoinPrice,toCurrencyCoinPrice)
 
         return res.status(200).json({ relativePrice });
     } catch (error) {
@@ -136,3 +142,27 @@ export const fromCurrenyToCurrency = async (req: Request, res: Response) => {
     }
 }
 
+
+export const getCompanyList = async (req: Request, res: Response) => {
+    try {
+        const { body } = req as Req;
+        const { currency } = body;
+
+        if (currency !== "bitcoin" && currency !== "ethereum") {
+            return res.status(400).json({ message: "List of companies can be seen for only bitcoin or ethereum" })
+        }
+
+        const response = await axios.get(`https://api.coingecko.com/api/v3/companies/public_treasury/${currency}`);
+
+        const data = response.data as CryptoPortfolioData;
+
+        const companies = data.companies.map(company => company.name);
+
+        return res.status(200).json({ companies });
+
+    } catch (error) {
+        const e = error as CustomError;
+        res.status(500).json({ message: e.message });
+        return;
+    }
+}
