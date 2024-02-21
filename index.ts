@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import coinRoutes from "./routes/coins";
 
 let app = express();
 dotenv.config();
@@ -14,6 +15,8 @@ app.use(cors());
 app.get('/', (req, res) => {
   res.send("APP IS RUNNING");
 });
+
+app.use("/coins", coinRoutes);
 
 let PORT = process.env.PORT;
 mongoose.connect(process.env.CONNECTION_URL!)
