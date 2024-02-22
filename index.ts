@@ -22,7 +22,7 @@ app.use("/coins", coinRoutes);
 
 cron.schedule("0 * * * *", async () => {
   console.log("Cron job running");
-  await axios.get("http://localhost:8000/coins/fetch-coins");
+  await axios.get("http://15.206.125.94:8000/coins/fetch-coins");
 });
 
 let PORT = process.env.PORT;
