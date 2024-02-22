@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import coinRoutes from "./routes/coins";
+import cron from "node-cron"
+import axios from "axios";
 
 let app = express();
 dotenv.config();
@@ -17,6 +19,11 @@ app.get('/', (req, res) => {
 });
 
 app.use("/coins", coinRoutes);
+
+cron.schedule("0 * * * *", async () => {
+  console.log("Cron job running");
+  await axios.get("http://localhost:8000/coins/fetch-coins");
+});
 
 let PORT = process.env.PORT;
 mongoose.connect(process.env.CONNECTION_URL!)

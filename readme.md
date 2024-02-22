@@ -1,84 +1,63 @@
-# Task Management System
+# CryptoCoin API
 
-This is a TypeScript-based backend for a Task Management System using Express and Sequelize. The application includes features for managing tasks, subtasks, and users. Additionally, it utilizes the Twilio API for initiating calls to users based on task priority.
+This is a simple Express.js API for retrieving information about cryptocurrencies and performing various tasks related to crypto coins.
 
 ## Table of Contents
 
-- [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Endpoints](#endpoints)
+- [API Endpoints](#api-endpoints)
+  - [Fetch Coins](#fetch-coins)
+  - [Convert from Currency to Currency](#convert-from-currency-to-currency)
+  - [Get Company List](#get-company-list)
 - [Cron Job](#cron-job)
-- [Contributing](#contributing)
-- [License](#license)
-
-## Prerequisites
-
-- Node.js (>=14.x)
-- PostgreSQL Database
-- Twilio Account SID and Auth Token
 
 ## Installation
 
 1. **Clone the repository:**
 
-    ```bash
-    git clone <repository-url>
-    ```
-
-2. **Install dependencies:**
-
-    ```bash
-    cd <project-folder>
+   ```bash
+   git clone https://github.com/orionleo/crypto-api.git
+   cd crypto-api
     npm install
-    ```
-
-3. **Set up environment variables:**
-
-    Create a `.env` file in the root directory with the following variables:
-
-    ```env
-    TWILIO_ACCOUNT_SID=<your-twilio-account-sid>
-    TWILIO_AUTH_TOKEN=<your-twilio-auth-token>
-    DATABASE_URL=<your-database-url>
-    PORT=<port-number>
-    ```
-
-    Replace `<your-twilio-account-sid>`, `<your-twilio-auth-token>`, `<your-database-url>`, and `<port-number>` with your Twilio credentials, PostgreSQL database URL, and desired port number.
-
-4. **Run the migrations:**
-
-    ```bash
-    npm run migrate
-    ```
-
+        ```
 ## Usage
 
-Start the server:
+The API provides endpoints for fetching coin information, converting from one currency to another, and getting a list of companies related to Bitcoin or Ethereum.
 
-```bash
-npm start
-```
+## API Endpoints
 
-The server will be running on the specified port, and the PostgreSQL database will be connected.
-## Endpoints
+1. **Fetch Coins**
 
-### Users
-- `POST /users/call-user`: Initiates calls to users based on task priorities.
+   - **Endpoint:** `GET /coins/fetch-coins`
+   - **Description:** Fetches and saves the list of cryptocurrencies from CoinGecko API to the MongoDB database.
 
-### Tasks
-- `POST /tasks/create-task`: Creates a new task.
-- `GET /tasks/get-all-tasks/:userId`: Retrieves all tasks for a specific user.
-- `PATCH /tasks/update-task/:taskId`: Updates task details, including due date and status.
-- `DELETE /tasks/delete-task/:taskId`: Deletes a task and its associated subtasks.
-- `PATCH /tasks/update-task-priority`: Updates task priorities based on due dates.
+2. **Convert from Currency to Currency**
 
-### Subtasks
-- `POST /subtasks/create-subtask`: Creates a new subtask.
-- `GET /subtasks/get-all-subtasks/:userId`: Retrieves all subtasks for a specific user.
-- `PATCH /subtasks/update-subtask/:subTaskId`: Updates the status of a subtask.
-- `DELETE /subtasks/delete-subtask/:subTaskId`: Deletes a subtask.
+   - **Endpoint:** `POST /coins/from-currency-to-currency`
+   - **Description:** Converts the value of one cryptocurrency to another for a specific date.
+
+   - **Request Body:**
+     ```json
+     {
+       "fromCurrency": "crypto_id_1",
+       "toCurrency": "crypto_id_2",
+       "date": "DD-MM-YYYY"
+     }
+     ```
+
+3. **Get Company List**
+
+   - **Endpoint:** `POST /coins/get-company-list`
+   - **Description:** Gets a list of companies related to Bitcoin or Ethereum.
+
+   - **Request Body:**
+     ```json
+     {
+       "currency": "bitcoin"
+     }
+     ```
 
 ## Cron Job
 
-The application includes a scheduled cron job that runs daily at midnight. This job updates task priorities based on due dates and initiates calls to users with tasks having specific status messages.
+There is a cron job scheduled to run every hour, fetching updated coin data.
