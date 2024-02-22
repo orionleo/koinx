@@ -1,6 +1,7 @@
 # CryptoCoin API
 
 This is a simple Express.js API for retrieving information about cryptocurrencies and performing various tasks related to crypto coins.
+The EC2 instance is deployed at http://15.206.125.94:8000/
 
 ## Table of Contents
 
