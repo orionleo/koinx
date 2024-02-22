@@ -7,6 +7,11 @@ import coinRoutes from "./routes/coins";
 import cron from "node-cron"
 import axios from "axios";
 
+interface CustomError extends Error {
+  code: number;
+  message: string;
+}
+
 let app = express();
 dotenv.config();
 
@@ -21,8 +26,14 @@ app.get('/', (req, res) => {
 app.use("/coins", coinRoutes);
 
 cron.schedule("0 * * * *", async () => {
-  console.log("Cron job running");
-  await axios.get("http://15.206.125.94:8000/coins/fetch-coins");
+  try {
+    console.log("Cron job running");
+    await axios.get("http://15.206.125.94:8000/coins/fetch-coins");
+  } catch (error) {
+    const e = error as CustomError;
+    console.log(e.code, e.message);
+  }
+
 });
 
 let PORT = process.env.PORT;
